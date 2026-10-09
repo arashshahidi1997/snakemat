@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snakemat"
+version = "0.1.0"
+description = "First-class MATLAB support for Snakemake pipelines"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Arash Shahidi", email = "A.Shahidi@campus.lmu.de" }]
+keywords = ["snakemake", "matlab", "workflow", "pipeline"]
+license = { text = "MIT" }
+dependencies = ["snakemake>=8.0"]
+
+[project.optional-dependencies]
+dev = ["pytest", "build", "twine"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
