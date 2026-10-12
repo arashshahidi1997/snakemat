@@ -57,8 +57,8 @@ Runs under MATLAB or Octave; `snakemake --report` shows the `.m` source.
 ## Loop
 
 Each phase repeats implement → test → revise spec until its exit holds. Every MUST clause
-in the spec has an ID and a test that names it; spec changes go in its changelog. Save
-each pass with `datalad_save`.
+in the spec has an ID and a test that names it; spec changes go in its changelog. Commit
+each pass.
 
 ## Decisions
 

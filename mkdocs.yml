@@ -2,8 +2,3 @@ site_name: snakemake-matlab
 docs_dir: docs
 theme:
   name: material
-plugins:
-  - search
-  - ezlinks
-  - bibtex:
-      bib_file: .projio/render/compiled.bib

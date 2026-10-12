@@ -5,28 +5,10 @@ platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 
 [dependencies]
 python = ">=3.11,<3.13"
-go-task = "*"          # the `task` binary (go-task)
 pytest = "*"
 
 [pypi-dependencies]
-projio = { version = "*", extras = ["indexio", "notio"] }
 snakemake-matlab = { path = ".", editable = true }  # pulls snakemake via [project] deps
-
-# --- Optional capability features (enable per project) ---------------------
-# Render (pandoc + TeX for PDF) — manuscript/master build tasks need this.
-[feature.render.dependencies]
-pandoc = ">=3.1"
-[feature.render.target.linux-64.dependencies]
-texlive-core = "*"
-
-# Pipelines (Snakemake).
-[feature.pipeline.pypi-dependencies]
-snakemake = ">=8.0"
-
-# DataLad + git-annex (linux-only on conda-forge).
-[feature.datalad.target.linux-64.dependencies]
-datalad = "*"
-git-annex = "*"
 
 # Code style, mirroring Snakemake: black formats, ruff lints, snakefmt formats Snakefiles,
 # codespell checks spelling, MISS_HIT checks shipped .m files (MATLAB mode rejects
@@ -52,8 +34,6 @@ octave = ">=10"
 
 [environments]
 default = { features = [] }
-render  = { features = ["render"] }
-full    = { features = ["render", "pipeline", "datalad"] }
 quality = { features = ["style"] }
 octave  = { features = ["octave"] }
 

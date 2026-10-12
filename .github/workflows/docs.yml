@@ -1,8 +1,6 @@
 name: docs
 
-# Manual-only until the docs are worth publishing. Before re-enabling the push
-# trigger: install the plugins mkdocs.yml uses (ezlinks, bibtex), make the
-# bibtex bib_file available in CI, and enable Pages on the repo.
+# Manual-only until the docs are worth publishing (plan Phase 5); enable Pages first.
 on:
   workflow_dispatch:
 
