@@ -1,16 +1,16 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "snakemat"
+name = "snakemake-matlab"
 version = "0.1.0"
-description = "First-class MATLAB support for Snakemake pipelines"
+description = "MATLAB and Octave scripts in Snakemake's script directive"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Arash Shahidi", email = "A.Shahidi@campus.lmu.de" }]
-keywords = ["snakemake", "matlab", "workflow", "pipeline"]
-license = { text = "MIT" }
+keywords = ["snakemake", "matlab", "octave", "workflow", "pipeline"]
+license = "MIT"
 dependencies = ["snakemake>=8.0"]
 
 [project.optional-dependencies]
@@ -18,3 +18,24 @@ dev = ["pytest", "build", "twine"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+snakemake_matlab = ["matlab/**/*.m"]
+
+[tool.black]
+target-version = ["py311"]
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.codespell]
+skip = ".git,.pixi,.projio,*.lock,*.svg,site"
+check-hidden = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--verbose --show-capture=stderr"
+markers = [
+  "needs_matlab: requires MATLAB; skipped if not found",
+  "needs_octave: requires Octave; skipped if not found",
+]

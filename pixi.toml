@@ -1,5 +1,5 @@
 [workspace]
-name = "snakemat"
+name = "snakemake-matlab"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 
@@ -10,7 +10,7 @@ pytest = "*"
 
 [pypi-dependencies]
 projio = { version = "*", extras = ["indexio", "notio"] }
-snakemat = { path = ".", editable = true }  # pulls snakemake via [project] deps
+snakemake-matlab = { path = ".", editable = true }  # pulls snakemake via [project] deps
 
 # --- Optional capability features (enable per project) ---------------------
 # Render (pandoc + TeX for PDF) — manuscript/master build tasks need this.
@@ -28,11 +28,35 @@ snakemake = ">=8.0"
 datalad = "*"
 git-annex = "*"
 
+# Code style, mirroring Snakemake: black formats, ruff lints, snakefmt formats Snakefiles,
+# codespell checks spelling, MISS_HIT checks shipped .m files (MATLAB mode rejects
+# Octave-only syntax).
+[feature.style.pypi-dependencies]
+black = "*"
+ruff = "*"
+snakefmt = "*"
+codespell = "*"
+miss_hit = "*"
+
+[feature.style.tasks]
+format = { cmd = "black src tests && snakefmt tests", description = "Format Python and Snakefiles", default-environment = "quality" }
+format-check = { cmd = "black --check --diff src tests && snakefmt --check tests", description = "Check formatting without changing files", default-environment = "quality" }
+lint = { cmd = "ruff check src tests && codespell && mh_style src tests", description = "Lint Python, spelling and .m files", default-environment = "quality" }
+
+# GNU Octave: license-free runtime for tests. conda-forge has no Windows build.
+[feature.octave]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
+
+[feature.octave.dependencies]
+octave = ">=10"
+
 [environments]
 default = { features = [] }
 render  = { features = ["render"] }
 full    = { features = ["render", "pipeline", "datalad"] }
+quality = { features = ["style"] }
+octave  = { features = ["octave"] }
 
 [tasks]
-# The projio task menu lives in .projio/Taskfile.yml (go-task). Run:
-#   pixi run task --list         # then e.g.  pixi run task projio:sync
+test = { cmd = "pytest", description = "Run all tests; runtime tests skip when MATLAB/Octave is missing" }
+test-unit = { cmd = "pytest -m 'not needs_matlab and not needs_octave'", description = "Run tests that need neither MATLAB nor Octave" }
