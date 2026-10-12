@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import subprocess
 
 import pytest
 
@@ -20,19 +21,23 @@ def find_octave() -> str | None:
 
 _FINDERS = {"needs_matlab": find_matlab, "needs_octave": find_octave}
 
+RUNTIMES = [
+    pytest.param("matlab", marks=pytest.mark.needs_matlab),
+    pytest.param("octave", marks=pytest.mark.needs_octave),
+]
+
+
+def run_m(runtime: str, statement: str) -> None:
+    """Run a MATLAB statement in the given runtime; raise if it errors."""
+    if runtime == "matlab":
+        cmd = [find_matlab(), "-batch", statement]
+    else:
+        cmd = [find_octave(), "--eval", statement]
+    subprocess.run(cmd, check=True)
+
 
 def pytest_collection_modifyitems(config, items):
     missing = {marker for marker, find in _FINDERS.items() if find() is None}
     for item in items:
         for marker in missing.intersection(item.keywords):
             item.add_marker(pytest.mark.skip(reason=f"{marker}: executable not found"))
-
-
-@pytest.fixture(scope="session")
-def matlab_executable() -> str | None:
-    return find_matlab()
-
-
-@pytest.fixture(scope="session")
-def octave_executable() -> str | None:
-    return find_octave()
