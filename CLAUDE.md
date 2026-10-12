@@ -1,4 +1,37 @@
-# snakemat
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+# snakemake-matlab
+
+MATLAB and GNU Octave support for Snakemake's `script:` directive (`snakemake-matlab` on
+PyPI, imported as `snakemake_matlab`): `script: "foo.m"` runs with a `snakemake` object
+injected, and `snakemake --report` shows the `.m` source. Scaffold only so far. Renamed
+from `snakemat` on 2026-10-12; the repo folder, projio project and GitHub repo keep the
+old name.
+
+Read `docs/design/plan.md` before coding: it holds the design, the decisions and the
+Snakemake internals they rest on. Evidence and history: the design note
+`docs/log/idea/idea-arash-20261009-192036-757067.md` (read it with `note_read`).
+
+## Commands
+
+```bash
+pixi run test                    # runtime tests skip if MATLAB/Octave is missing
+pixi run test-unit               # tests that need neither runtime
+pixi run -e octave test          # with Octave 10.3 (conda-forge, linux/macOS)
+pixi run pytest tests/test_snakemake_matlab.py::test_import
+pixi run format                  # black + snakefmt
+pixi run format-check
+pixi run lint                    # ruff, codespell, mh_style
+```
+
+- MATLAB R2023a is on `PATH` on gamma2 (`/storage/share/bin/R2023a/bin/matlab`). Override
+  with `SNAKEMAKE_MATLAB_EXECUTABLE` / `SNAKEMAKE_MATLAB_OCTAVE_EXECUTABLE`.
+- There is no Makefile: the `make` targets in the projio section below don't exist. Save
+  and push with the MCP datalad tools.
+- Rules live in `.claude/rules/` (loaded automatically). `/tidy` runs the style, lean and
+  DRY pass.
 
 ## Projio workspace
 
@@ -248,11 +281,5 @@ Agent-written notes get a template prompt pointing at the source — no LLM call
 
 ## Development
 
-```bash
-make         # see available targets
-make save    # datalad save
-make push    # datalad push
-```
-
-Agents should prefer the MCP tools `datalad_save()`, `datalad_push()`, `datalad_pull()`,
-and `datalad_status()` over running make/datalad commands directly.
+No Makefile exists yet (see Commands at the top), so `runtime_conventions()` returns nothing useful.
+Use the MCP tools `datalad_save()`, `datalad_push()`, `datalad_pull()`, and `datalad_status()`.

@@ -1,3 +1,3 @@
-# snakemat
+# snakemake-matlab
 
-First-class MATLAB support for Snakemake pipelines.
+MATLAB and GNU Octave scripts in Snakemake's `script:` directive.
