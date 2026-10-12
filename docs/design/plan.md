@@ -60,28 +60,27 @@ Each phase repeats implement → test → revise spec until its exit holds. Ever
 in the spec has an ID and a test that names it; spec changes go in its changelog. Save
 each pass with `datalad_save`.
 
-## Decisions (settle in Phase 0)
+## Decisions
 
-| | Decision | Why |
+Settled in Phase 0; the behaviour lives in `spec.md`. Why each choice:
+
+| | Choice (spec) | Why |
 |---|---|---|
-| D1 | `snakemake_matlab.enable()` in the Snakefile; importing alone patches nothing | Visible; re-applies when cluster jobs re-parse the Snakefile |
-| D2 | Patch `snakemake.script.get_language` (`.m` → `"matlab"`); wrap `snakemake.script.script` and `snakemake.workflow.script`, binding args by name | See internals above |
-| D3 | `MatlabEncoder` writes MATLAB literals into the preamble | Exact types, no sidecar files, upstream shape; `jsondecode` mangles lists and arrays |
-| D4 | `NamedList` class (`input{1}`, `input.raw`) if it works in Octave; else struct + cell | Parity with R and Julia |
-| D5 | Per-job dir with valid-identifier file names; verbatim script copy called by name after `addpath` | See internals above; `run()` changes folder; line numbers stay right |
-| D6 | Run via `_execute_cmd`: `matlab -batch` / `octave-cli --eval`; executable from `enable()`, `SNAKEMAKE_MATLAB_EXECUTABLE` / `SNAKEMAKE_MATLAB_OCTAVE_EXECUTABLE`, or `PATH` | Both exit 1 on error; conda, containers and envmodules for free |
-| D7 | Cap threads: `maxNumCompThreads` in MATLAB; Octave to be checked | MATLAB grabs every core |
-| D8 | No log redirection; document `diary(snakemake.log{1})` | Parity |
-| D9 | Mangle invalid keys like `makeValidName`; error on collision | Matches `jsondecode` |
-| D10 | MATLAB by default; `enable(runtime="octave")` or `SNAKEMAKE_MATLAB_RUNTIME` | `.m` can't tell them apart |
+| D1 | `enable()` in the Snakefile (ACT) | Visible; re-applies when cluster jobs re-parse the Snakefile |
+| D2 | Patch the three names in the internals above (ACT, REP-1) | `get_language` fixes the report, the `script` wrappers fix execution |
+| D3 | `MatlabEncoder` writes MATLAB literals (OBJ-4) | Exact types, no sidecar files, upstream shape; `jsondecode` mangles lists and arrays |
+| D4 | `NamedList` (OBJ-1 to OBJ-3) | Parity with R and Julia; works in both runtimes |
+| D5 | Per-job folder; verbatim copy called by name (FILE) | MATLAB rejects temp names; `run()` changes folder; line numbers stay right |
+| D6 | `-batch` / `--eval` via `_execute_cmd` (RUN-2 to RUN-4) | Both exit 1 on error; conda, containers and envmodules for free |
+| D7 | `maxNumCompThreads` (RUN-6) | Both runtimes grab every core otherwise; works in both |
+| D8 | No log redirection (LOG-1) | Parity |
+| D9 | `makeValidName`-style mangling (OBJ-5) | Matches `jsondecode` |
+| D10 | Workflow-wide runtime switch (RUN-1) | `.m` can't tell MATLAB from Octave |
 
 ## Phases
 
-**0. Spike and spec v0.** One `.m` rule under both runtimes. Check the report, `NamedList`
-in Octave, `run()` and file names, Octave threads. Write spec v0. Exit: each decision
-settled or deferred. Then draft the upstream issue (built-in class tested via
-`envs/octave.yaml`, or a script-plugin interface; MATLAB vs Octave choice; encoder in core
-or `snakemake-object`).
+**0. Spike and spec v0.** Done 2026-10-12; evidence in the spec. Upstream issue drafted
+in `upstream-issue.md`, waiting for Arash's review.
 
 **1. Core.** `enable()`, patch, `MatlabEncoder`, `MatlabScript`. Tests: encoder golden
 strings, file names, patch idempotency; one workflow case per runtime covering every

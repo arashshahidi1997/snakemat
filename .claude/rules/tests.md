@@ -8,5 +8,5 @@ paths:
   skips them when the executable is missing.
 - Workflow cases use Snakemake's layout:
   `tests/test_script_<case>/{Snakefile,scripts/,expected-results/,envs/}`.
-- A cold MATLAB start takes ~62 s on gamma2: put many rules in one workflow case, and
-  iterate on Octave first.
+- MATLAB starts slowly (see the spec's evidence): put many rules in one workflow case,
+  and iterate on Octave first.
